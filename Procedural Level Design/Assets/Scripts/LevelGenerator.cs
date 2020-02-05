@@ -17,21 +17,24 @@ public enum TileType {
 public class LevelGenerator : MonoBehaviour
 {
     public GameObject[] tiles;
+    Node node;
+    int width = 64;
+    int height = 64;
 
     protected void Start()
-    {        
-        int width = 64;
-        int height = 64;
+    {    
         TileType[,] grid = new TileType[height, width];
+        CreateNodes(width, height);
+      
 
-        FillBlock(grid, 0, 0, width, height, TileType.Wall);
-        FillBlock(grid, 26, 26, 12, 12, TileType.Empty);
-        FillBlock(grid, 32, 28, 1, 1, TileType.Player);
-        FillBlock(grid, 30, 30, 1, 1, TileType.Dagger);
-        FillBlock(grid, 34, 30, 1, 1, TileType.Key);
-        FillBlock(grid, 32, 32, 1, 1, TileType.Door);
-        FillBlock(grid, 32, 36, 1, 1, TileType.Enemy);
-        FillBlock(grid, 32, 34, 1, 1, TileType.End);
+        //FillBlock(grid, 0, 0, width, height, TileType.Wall);
+        //FillBlock(grid, 26, 26, 12, 12, TileType.Empty);
+        //FillBlock(grid, 32, 28, 1, 1, TileType.Player);
+        //FillBlock(grid, 30, 30, 1, 1, TileType.Dagger);
+        //FillBlock(grid, 34, 30, 1, 1, TileType.Key);
+        //FillBlock(grid, 32, 32, 1, 1, TileType.Door);
+        //FillBlock(grid, 32, 36, 1, 1, TileType.Enemy);
+        //FillBlock(grid, 32, 34, 1, 1, TileType.End);
 
         Debugger.instance.AddLabel(32, 26, "Room 1");
 
@@ -81,4 +84,19 @@ public class LevelGenerator : MonoBehaviour
         return null;
     }
 
+    private void CreateNodes(int width, int height)
+    {
+        node = new Node(0, 0, width, height);
+        //node.SplitNode();
+    }
+
+    void OnDrawGizmos()
+    {
+        // Draw a yellow cube at the transform position
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(new Vector3(0, 0), new Vector3(width, 0));
+        Gizmos.DrawLine(new Vector3(0, height), new Vector3(width, height));
+        Gizmos.DrawLine(new Vector3(0, 0), new Vector3(0, height));
+        Gizmos.DrawLine(new Vector3(width, height), new Vector3(width, 0));
+    }
 }
