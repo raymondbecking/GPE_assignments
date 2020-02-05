@@ -185,7 +185,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 190834795}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.09, z: -3.05}
+  m_LocalPosition: {x: 0, y: 0.09, z: -5.09}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -330,9 +330,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 2100000, guid: 327d4ca4811101e44958cdf45df98c6c, type: 2}
-  - {fileID: 2100000, guid: e1a6eeb16893a524e8caa43ebc6e8a6d, type: 2}
-  - {fileID: 2100000, guid: f628187cb6825ed4e9b23b0b6b0dccfb, type: 2}
+  - {fileID: 2100000, guid: a0463c002a69e744b9ec9c3bdc01d39d, type: 2}
+  - {fileID: 2100000, guid: a0463c002a69e744b9ec9c3bdc01d39d, type: 2}
+  - {fileID: 2100000, guid: 67288b27efb4a1645847458f6586de2b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -383,5 +383,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17a92b3344e7c3d4faf5f5550433bae6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  springForce: 15
-  damping: 1.1
+  springForce: 1
+  damping: 0
+  amplitude: 0.125
+  frequency: 8

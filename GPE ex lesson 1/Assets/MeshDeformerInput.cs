@@ -22,8 +22,10 @@ public class MeshDeformerInput : MonoBehaviour {
 
     void HandleInput()
     {
+        //Cast ray to mousepos
         Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
+
 
         if (Physics.Raycast(inputRay, out hit))
         {
@@ -31,8 +33,12 @@ public class MeshDeformerInput : MonoBehaviour {
             if (deformer)
             {
                 Vector3 point = hit.point;
-                point += hit.normal * forceOffset;
-                deformer.AddDeformingForce(point, force);
+                deformer.AddDeformingRipple(point);
+
+
+                //Spring deforming;
+                //point += hit.normal * forceOffset;
+                //deformer.AddDeformingForce(point, force);
             }
         }
     }

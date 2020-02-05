@@ -7,7 +7,7 @@ public class CubeSphere : MonoBehaviour
 
     public int gridSize;
     private Vector3[] vertices;
-    private Color32[] cubeUV;
+    private Vector2[] cubeUV;
     private Vector3[] normals;
 
     private Mesh mesh;
@@ -38,7 +38,7 @@ public class CubeSphere : MonoBehaviour
             (gridSize - 1) * (gridSize - 1)) * 2;
         vertices = new Vector3[cornerVertices + edgeVertices + faceVertices];
         normals = new Vector3[vertices.Length];
-        cubeUV = new Color32[vertices.Length];
+        cubeUV = new Vector2[vertices.Length];
 
         int v = 0;
         for (int y = 0; y <= gridSize; y++)
@@ -76,7 +76,7 @@ public class CubeSphere : MonoBehaviour
         }
         mesh.vertices = vertices;
         mesh.normals = normals;
-        mesh.colors32 = cubeUV;
+        mesh.uv = cubeUV;
     }
 
     private void CreateTris()
@@ -207,9 +207,10 @@ public class CubeSphere : MonoBehaviour
         Vector3 v = new Vector3(x, y, z) * 2f / gridSize - Vector3.one;
         normals[i] = v.normalized;
         vertices[i] = normals[i] * radius;
-        cubeUV[i] = new Color32((byte)x, (byte)y, (byte)z, 0);
+        cubeUV[i] = new Vector2(v.x , v.y);
     }
 
+    //Draw vertices
     private void OnDrawGizmos()
     {
         if (vertices == null)
