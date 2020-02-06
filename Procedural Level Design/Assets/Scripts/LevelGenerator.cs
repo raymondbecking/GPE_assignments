@@ -22,8 +22,8 @@ public class LevelGenerator : MonoBehaviour
     Node node;
     public List<Node> nodeList;
 
-    int width = 64;
-    int height = 64;
+    int width = 128;
+    int height = 128;
 
     protected void Start()
     {
@@ -31,7 +31,7 @@ public class LevelGenerator : MonoBehaviour
 
         //List to save nodes, list is used because there are n amount of nodes
         nodeList = new List<Node>();
-        CreateNodes(width, height);
+        CreateNodes(width, height, 128);
 
 
         //FillBlock(grid, 0, 0, width, height, TileType.Wall);
@@ -102,22 +102,25 @@ public class LevelGenerator : MonoBehaviour
         return null;
     }
 
-    private void CreateNodes(int width, int height)
+    private void CreateNodes(int width, int height, int maxSplits)
     {
         //Create root node
         node = new Node(0, 0, width, height);
         nodeList.Add(node);
-        //Split root node
-        nodeList.Add(nodeList[0].SplitNode().Item1);
-        nodeList.Add(nodeList[0].SplitNode().Item2);
+        //Split from root node
+        for (int i = 0; i < maxSplits; i++)
+        {
+            var nodeTuple = nodeList[i].SplitNode();
+            nodeList.Add(nodeTuple.Item1);
+            nodeList.Add(nodeTuple.Item2);
+        }
+        ////Split node A
+        //nodeList.Add(nodeList[1].SplitNode().Item1);
+        //nodeList.Add(nodeList[1].SplitNode().Item2);
 
-        //Split node A
-        nodeList.Add(nodeList[1].SplitNode().Item1);
-        nodeList.Add(nodeList[1].SplitNode().Item2);
-
-        //Split node B
-        nodeList.Add(nodeList[2].SplitNode().Item1);
-        nodeList.Add(nodeList[2].SplitNode().Item2);
+        ////Split node B
+        //nodeList.Add(nodeList[2].SplitNode().Item1);
+        //nodeList.Add(nodeList[2].SplitNode().Item2);
 
         //node.SplitNode(5);//Split root node with amount of splits
 

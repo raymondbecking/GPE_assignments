@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class Node
 {
-    public Node childA;
-    public Node childB;
-    public int x, y, width, height;
+    private Node childA, childB;
+    private int x, y, width, height;
 
     public Node(int nX, int nY, int nWidth, int nHeight)
     {
@@ -19,7 +18,7 @@ public class Node
     public (Node, Node) SplitNode()
     {//Give level of how many splits are needed     
         //Temporary hardcoded split
-        int nodeSeperation = width / 2;
+        int nodeSeperation = width  / 2;
         //Create child node from origin to split
         childA = new Node(x, y, nodeSeperation, height);
         //Create child node from split to end
@@ -30,7 +29,7 @@ public class Node
 
     public void DrawNode()
     {
-        Gizmos.color = Color.yellow;
+        Gizmos.color = new Color(0.1f, 0.1f, 0.1f);
         Gizmos.DrawLine(new Vector3(this.x, this.y), new Vector3(this.width, this.y));
         Gizmos.DrawLine(new Vector3(this.x, this.height), new Vector3(this.width, this.height));
         Gizmos.DrawLine(new Vector3(this.x, this.y), new Vector3(this.x, this.height));
