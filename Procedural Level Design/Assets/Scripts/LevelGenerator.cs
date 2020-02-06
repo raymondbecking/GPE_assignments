@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Utils;
 
-public enum TileType {
+public enum TileType
+{
     Empty = 0,
     Player,
     Enemy,
@@ -22,10 +23,10 @@ public class LevelGenerator : MonoBehaviour
     int height = 64;
 
     protected void Start()
-    {    
+    {
         TileType[,] grid = new TileType[height, width];
         CreateNodes(width, height);
-      
+
 
         //FillBlock(grid, 0, 0, width, height, TileType.Wall);
         //FillBlock(grid, 26, 26, 12, 12, TileType.Empty);
@@ -43,41 +44,52 @@ public class LevelGenerator : MonoBehaviour
     }
 
     //fill part of array with tiles
-    private void FillBlock(TileType[,] grid, int x, int y, int width, int height, TileType fillType) {
-        for (int tileY=0; tileY<height; tileY++) {
-            for (int tileX=0; tileX<width; tileX++) {
+    private void FillBlock(TileType[,] grid, int x, int y, int width, int height, TileType fillType)
+    {
+        for (int tileY = 0; tileY < height; tileY++)
+        {
+            for (int tileX = 0; tileX < width; tileX++)
+            {
                 grid[tileY + y, tileX + x] = fillType;
             }
         }
     }
 
     //use array to create tiles
-    private void CreateTilesFromArray(TileType[,] grid) {
+    private void CreateTilesFromArray(TileType[,] grid)
+    {
         int height = grid.GetLength(0);
         int width = grid.GetLength(1);
-        for (int y=0; y<height; y++) {
-            for (int x=0; x<width; x++) {
-                 TileType tile = grid[y, x];
-                 if (tile != TileType.Empty) {
-                     CreateTile(x, y, tile);
-                 }
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                TileType tile = grid[y, x];
+                if (tile != TileType.Empty)
+                {
+                    CreateTile(x, y, tile);
+                }
             }
         }
     }
 
     //create a single tile
-    private GameObject CreateTile(int x, int y, TileType type) {
+    private GameObject CreateTile(int x, int y, TileType type)
+    {
         int tileID = ((int)type) - 1;
         if (tileID >= 0 && tileID < tiles.Length)
         {
             GameObject tilePrefab = tiles[tileID];
-            if (tilePrefab != null) {
+            if (tilePrefab != null)
+            {
                 GameObject newTile = GameObject.Instantiate(tilePrefab, new Vector3(x, y, 0), Quaternion.identity);
                 newTile.transform.SetParent(transform);
                 return newTile;
             }
 
-        } else {
+        }
+        else
+        {
             Debug.LogError("Invalid tile type selected");
         }
 
@@ -86,17 +98,35 @@ public class LevelGenerator : MonoBehaviour
 
     private void CreateNodes(int width, int height)
     {
+        //Create root node
         node = new Node(0, 0, width, height);
-        //node.SplitNode();
+        //Split root node
+        node.SplitNode();
+        node.childA.SplitNode();
+        //node.SplitNode(5);//Split root node with amount of splits
     }
 
     void OnDrawGizmos()
     {
         // Draw a yellow cube at the transform position
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawLine(new Vector3(0, 0), new Vector3(width, 0));
-        Gizmos.DrawLine(new Vector3(0, height), new Vector3(width, height));
-        Gizmos.DrawLine(new Vector3(0, 0), new Vector3(0, height));
-        Gizmos.DrawLine(new Vector3(width, height), new Vector3(width, 0));
+        
+        if (node.childA != null)
+        {
+            Gizmos.color = Color.yellow;
+            //Create gizmo square around the edges of the node
+            Gizmos.DrawLine(new Vector3(node.childA.x, node.childA.y), new Vector3(node.childA.width, node.childA.y));
+            Gizmos.DrawLine(new Vector3(node.childA.x, node.childA.height), new Vector3(node.childA.width, node.childA.height));
+            Gizmos.DrawLine(new Vector3(node.childA.x, node.childA.y), new Vector3(node.childA.x, node.childA.height));
+            Gizmos.DrawLine(new Vector3(node.childA.width, node.childA.height), new Vector3(node.childA.width, node.childA.y));
+        }
+        if (node.childB != null)
+        {
+            Gizmos.color = Color.red;
+            //Create gizmo square around the edges of the node
+            Gizmos.DrawLine(new Vector3(node.childB.x, node.childB.y), new Vector3(node.childB.width, node.childB.y));
+            Gizmos.DrawLine(new Vector3(node.childB.x, node.childB.height), new Vector3(node.childB.width, node.childB.height));
+            Gizmos.DrawLine(new Vector3(node.childB.x, node.childB.y), new Vector3(node.childB.x, node.childB.height));
+            Gizmos.DrawLine(new Vector3(node.childB.width, node.childB.height), new Vector3(node.childB.width, node.childB.y));
+        }
     }
 }
