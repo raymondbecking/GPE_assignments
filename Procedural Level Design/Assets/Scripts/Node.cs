@@ -16,17 +16,25 @@ public class Node
         this.y = nY;
     }
 
-    public void SplitNode()
-    {//Give level of how many splits are needed
+    public (Node, Node) SplitNode()
+    {//Give level of how many splits are needed     
         //Temporary hardcoded split
         int nodeSeperation = width / 2;
-        Debug.Log(nodeSeperation);
         //Create child node from origin to split
         childA = new Node(x, y, nodeSeperation, height);
         //Create child node from split to end
-        childB = new Node((x + nodeSeperation), y, width, height);
-        
+        childB = new Node((x + nodeSeperation), y, width - nodeSeperation, height);
+        return (childA, childB);
 
+    }
+
+    public void DrawNode()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(new Vector3(this.x, this.y), new Vector3(this.width, this.y));
+        Gizmos.DrawLine(new Vector3(this.x, this.height), new Vector3(this.width, this.height));
+        Gizmos.DrawLine(new Vector3(this.x, this.y), new Vector3(this.x, this.height));
+        Gizmos.DrawLine(new Vector3(this.width, this.height), new Vector3(this.width, this.y));
     }
 
 
