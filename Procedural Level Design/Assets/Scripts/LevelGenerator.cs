@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Utils;
@@ -20,19 +21,24 @@ public class LevelGenerator : MonoBehaviour
     public GameObject[] tiles;
 
     Node node;
-    public List<Node> nodeList;
+    //Array to store nodes to loop through
+    public Node[] nodeArr = new Node[1];
 
     int width = 128;
     int height = 128;
+    public int maxSplits = 15;
+    public int maxSize = 20;
+    bool hasSplit = true;
+    int splitCounter = 0;
 
     protected void Start()
     {
         TileType[,] grid = new TileType[height, width];
 
-        //List to save nodes, list is used because there are n amount of nodes
-        nodeList = new List<Node>();
-        CreateNodes(width, height, 128);
+        CreateNodes(width, height, maxSplits);
 
+        //Fill room with walls
+        //FillBlock(grid, (int)node.x, (int)node.y, (int)node.width, (int)node.height, TileType.Wall);
 
         //FillBlock(grid, 0, 0, width, height, TileType.Wall);
         //FillBlock(grid, 26, 26, 12, 12, TileType.Empty);
@@ -106,38 +112,52 @@ public class LevelGenerator : MonoBehaviour
     {
         //Create root node
         node = new Node(0, 0, width, height);
-        nodeList.Add(node);
+       
+        nodeArr[0] = node;
+        
         //Split from root node
-        for (int i = 0; i < maxSplits; i++)
+        while (hasSplit)
         {
-            var nodeTuple = nodeList[i].SplitNode();
-            nodeList.Add(nodeTuple.Item1);
-            nodeList.Add(nodeTuple.Item2);
+            hasSplit = false;
+            //Control amount of splits
+            if (splitCounter < maxSplits)
+            {
+                foreach (Node n in nodeArr)
+                {
+                    //Only split if it has no children yet
+                    if (n.childA == null && n.childB == null)
+                    {
+                        //Prevent nodes from becoming too small or too big
+                        if (n.width > maxSize || n.height > maxSize)
+                        {
+                            if (n.SplitNode())
+                            {
+                                //Resize array to make space for 2 new children
+                                Array.Resize(ref nodeArr, nodeArr.Length + 2);
+                                nodeArr[nodeArr.Length - 2] = n.childA;
+                                nodeArr[nodeArr.Length - 1] = n.childB;
+
+                                splitCounter++;
+                                hasSplit = true;
+                            }
+                        }
+                    }
+                }
+            }
         }
-        ////Split node A
-        //nodeList.Add(nodeList[1].SplitNode().Item1);
-        //nodeList.Add(nodeList[1].SplitNode().Item2);
-
-        ////Split node B
-        //nodeList.Add(nodeList[2].SplitNode().Item1);
-        //nodeList.Add(nodeList[2].SplitNode().Item2);
-
-        //node.SplitNode(5);//Split root node with amount of splits
-
-        //Debug.Log("NodeB Split node A");
-        //Debug.Log(newNodes2.Item1.x);
-        //Debug.Log(newNodes2.Item1.width);
-        //Debug.Log("NodeB Split node B");
-        //Debug.Log(newNodes2.Item2.x);
-        //Debug.Log(newNodes2.Item2.width);
+        Debug.Log(nodeArr.Length);
     }
+
+    
 
     void OnDrawGizmos()
     {
-        //Draw a yellow line around the edges of the rectangle
-        foreach (Node node in nodeList) {
-            node.DrawNode();
-                }
+        //Draw a line around the edges of the rectangle
+        foreach (Node n in nodeArr)
+        {
+            n.DrawNode();
+        }
+        //Debug.Log(nodeList.Count);
 
         //if (node.childA != null)
         //{

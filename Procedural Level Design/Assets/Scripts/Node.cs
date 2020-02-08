@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class Node
 {
-    private Node childA, childB;
-    private int x, y, width, height;
+    public Node childA, childB;
+    public float x, y, width, height;
+    private float minSize = 9f;
+    private float maxSize;
 
-    public Node(int nX, int nY, int nWidth, int nHeight)
+    public Node(float nX, float nY, float nWidth, float nHeight)
     {
         this.width = nWidth;
         this.height = nHeight;
@@ -15,27 +17,65 @@ public class Node
         this.y = nY;
     }
 
-    public (Node, Node) SplitNode()
-    {//Give level of how many splits are needed     
-        //Temporary hardcoded split
-        int nodeSeperation = width  / 2;
-        //Create child node from origin to split
-        childA = new Node(x, y, nodeSeperation, height);
-        //Create child node from split to end
-        childB = new Node((x + nodeSeperation), y, width - nodeSeperation, height);
-        return (childA, childB);
+    public bool SplitNode()
+    {
+        //Prevent splitting a node that has already been split
+        if (this.childA != null || this.childB != null)
+        {
+            return false;
+        }
+
+        //Randomly split height or width
+        bool splitWidth = (Random.value > 0.5f);
+        if (splitWidth)
+        {
+            maxSize = width - minSize;
+        }
+        else
+        {
+            maxSize = height - minSize;
+        }
+        //Prevent splitting from creating nodes that are too small (also causes more even splitting)
+        if (maxSize < minSize)
+        {
+            return false;
+        }
+        //Make sure splitting is even
+        if (width > height && percentage(width, height) > 25) splitWidth = true;
+        else if (height > width && percentage(height, width) > 25) splitWidth = false;
+
+        
+        //Random split location
+        float nodeSeperation = Random.Range(minSize, maxSize);
+
+        if (splitWidth)
+        {
+            //Create child node A from origin to split (width)
+            childA = new Node(x, y, nodeSeperation, height);
+            //Create child node B from split to end (width)
+            childB = new Node((x + nodeSeperation), y, (width - nodeSeperation), height);
+        }
+        else
+        {
+            //Create child node A from origin to split (height)
+            childA = new Node(x, y, width, nodeSeperation);
+            //Create child node B from split to end (height)
+            childB = new Node(x, (y + nodeSeperation), width, (height - nodeSeperation));
+        }
+        return true;
 
     }
 
     public void DrawNode()
     {
-        Gizmos.color = new Color(0.1f, 0.1f, 0.1f);
-        Gizmos.DrawLine(new Vector3(this.x, this.y), new Vector3(this.width, this.y));
-        Gizmos.DrawLine(new Vector3(this.x, this.height), new Vector3(this.width, this.height));
-        Gizmos.DrawLine(new Vector3(this.x, this.y), new Vector3(this.x, this.height));
-        Gizmos.DrawLine(new Vector3(this.width, this.height), new Vector3(this.width, this.y));
+        Gizmos.color = new Color(Random.Range(0.1f, 0.9f), Random.Range(0.1f, 0.9f), Random.Range(0.1f, 0.9f));
+        //Draw line around the edges of the node
+        Gizmos.DrawWireCube(new Vector3(((this.width / 2) + this.x), ((this.height / 2) + this.y)), new Vector3((this.width), (this.height)));
     }
 
-
+    public float percentage(float val1, float val2)
+    {
+        return ((val1 / val2 * 100) - 100);
+    }
 
 }
