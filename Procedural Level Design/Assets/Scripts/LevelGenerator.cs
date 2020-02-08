@@ -19,6 +19,7 @@ public enum TileType
 public class LevelGenerator : MonoBehaviour
 {
     public GameObject[] tiles;
+    TileType[,] grid;
 
     Node node;
     //Array to store nodes to loop through
@@ -26,19 +27,21 @@ public class LevelGenerator : MonoBehaviour
 
     int width = 128;
     int height = 128;
+
     public int maxSplits = 15;
-    public int maxSize = 20;
+    public int minNodeSize = 20;
+
     bool hasSplit = true;
     int splitCounter = 0;
 
     protected void Start()
     {
-        TileType[,] grid = new TileType[height, width];
+        grid = new TileType[height, width];
 
         CreateNodes(width, height, maxSplits);
-
         //Fill room with walls
-        //FillBlock(grid, (int)node.x, (int)node.y, (int)node.width, (int)node.height, TileType.Wall);
+        FillBlock(grid, (int)node.x, (int)node.y, (int)node.width, (int)node.height, TileType.Wall);
+        CreateDungeonRooms();
 
         //FillBlock(grid, 0, 0, width, height, TileType.Wall);
         //FillBlock(grid, 26, 26, 12, 12, TileType.Empty);
@@ -112,9 +115,9 @@ public class LevelGenerator : MonoBehaviour
     {
         //Create root node
         node = new Node(0, 0, width, height);
-       
+
         nodeArr[0] = node;
-        
+
         //Split from root node
         while (hasSplit)
         {
@@ -128,7 +131,7 @@ public class LevelGenerator : MonoBehaviour
                     if (n.childA == null && n.childB == null)
                     {
                         //Prevent nodes from becoming too small or too big
-                        if (n.width > maxSize || n.height > maxSize)
+                        if (n.width > minNodeSize || n.height > minNodeSize)
                         {
                             if (n.SplitNode())
                             {
@@ -148,7 +151,24 @@ public class LevelGenerator : MonoBehaviour
         Debug.Log(nodeArr.Length);
     }
 
-    
+    void CreateDungeonRooms()
+    {
+        foreach (Node n in nodeArr)
+        {
+            if (n.childA == null && n.childB == null)
+            {
+                int widthSize = (int)UnityEngine.Random.Range(3, n.width - 3);
+                int heightSize = (int)UnityEngine.Random.Range(3, n.height - 3);
+                int posX = (int)UnityEngine.Random.Range(3, n.width - 3);
+                int poxY = (int)UnityEngine.Random.Range(3, n.width - 3);
+                FillBlock(grid, (int)n.x, (int)n.y, widthSize, heightSize, TileType.Wall);
+            }
+            else
+            {
+                
+            }
+        }
+    }
 
     void OnDrawGizmos()
     {
@@ -158,43 +178,6 @@ public class LevelGenerator : MonoBehaviour
             n.DrawNode();
         }
         //Debug.Log(nodeList.Count);
-
-        //if (node.childA != null)
-        //{
-        //    Gizmos.color = Color.yellow;
-        //    //Create gizmo square around the edges of the node
-        //    Gizmos.DrawLine(new Vector3(node.childA.x, node.childA.y), new Vector3(node.childA.width, node.childA.y));
-        //    Gizmos.DrawLine(new Vector3(node.childA.x, node.childA.height), new Vector3(node.childA.width, node.childA.height));
-        //    Gizmos.DrawLine(new Vector3(node.childA.x, node.childA.y), new Vector3(node.childA.x, node.childA.height));
-        //    Gizmos.DrawLine(new Vector3(node.childA.width, node.childA.height), new Vector3(node.childA.width, node.childA.y));
-        //    if (node.childA.childA != null)
-        //    {
-        //        Gizmos.color = Color.yellow;
-        //        //Create gizmo square around the edges of the node
-        //        Gizmos.DrawLine(new Vector3(node.childA.childA.x, node.childA.childA.y), new Vector3(node.childA.childA.width, node.childA.childA.y));
-        //        Gizmos.DrawLine(new Vector3(node.childA.childA.x, node.childA.childA.height), new Vector3(node.childA.childA.width, node.childA.childA.height));
-        //        Gizmos.DrawLine(new Vector3(node.childA.childA.x, node.childA.childA.y), new Vector3(node.childA.childA.x, node.childA.childA.height));
-        //        Gizmos.DrawLine(new Vector3(node.childA.childA.width, node.childA.childA.height), new Vector3(node.childA.childA.width, node.childA.childA.y));
-        //    }
-        //    if (node.childA.childB != null)
-        //    {
-        //        Gizmos.color = Color.red;
-        //        //Create gizmo square around the edges of the node
-        //        Gizmos.DrawLine(new Vector3(node.childA.childB.x, node.childA.childB.y), new Vector3(node.childA.childB.width, node.childA.childB.y));
-        //        Gizmos.DrawLine(new Vector3(node.childA.childB.x, node.childA.childB.height), new Vector3(node.childA.childB.width, node.childA.childB.height));
-        //        Gizmos.DrawLine(new Vector3(node.childA.childB.x, node.childA.childB.y), new Vector3(node.childA.childB.x, node.childA.childB.height));
-        //        Gizmos.DrawLine(new Vector3(node.childA.childB.width, node.childA.childB.height), new Vector3(node.childA.childB.width, node.childA.childB.y));
-        //    }
-        //}
-        //if (node.childB != null)
-        //{
-        //    Gizmos.color = Color.red;
-        //    //Create gizmo square around the edges of the node
-        //    Gizmos.DrawLine(new Vector3(node.childB.x, node.childB.y), new Vector3(node.childB.width, node.childB.y));
-        //    Gizmos.DrawLine(new Vector3(node.childB.x, node.childB.height), new Vector3(node.childB.width, node.childB.height));
-        //    Gizmos.DrawLine(new Vector3(node.childB.x, node.childB.y), new Vector3(node.childB.x, node.childB.height));
-        //    Gizmos.DrawLine(new Vector3(node.childB.width, node.childB.height), new Vector3(node.childB.width, node.childB.y));
-        //}
     }
 
 
