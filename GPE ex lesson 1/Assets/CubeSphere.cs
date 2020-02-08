@@ -8,7 +8,7 @@ public class CubeSphere : MonoBehaviour
     public int gridSize;
     private Vector3[] vertices;
     private Vector2[] cubeUV;
-    private Vector3[] normals;
+    public Vector3[] normals;
 
     private Mesh mesh;
     public float radius = 1f;
@@ -220,7 +220,8 @@ public class CubeSphere : MonoBehaviour
         Gizmos.color = Color.black;
         for (int i = 0; i < vertices.Length; i++)
         {
-            Gizmos.color = Color.black;
+            //Gizmos.color = Color.yellow;
+            //Gizmos.DrawRay(vertices[i], normals[i]);
         }
     }
 }

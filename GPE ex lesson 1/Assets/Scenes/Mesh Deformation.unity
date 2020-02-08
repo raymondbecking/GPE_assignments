@@ -302,6 +302,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridSize: 20
+  normals: []
   radius: 2
 --- !u!65 &755817843
 BoxCollider:
@@ -383,7 +384,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17a92b3344e7c3d4faf5f5550433bae6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  springForce: 1
-  damping: 0
-  amplitude: 0.125
-  frequency: 8
+  springForce: 30
+  damping: 0.3

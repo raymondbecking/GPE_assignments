@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class MeshDeformerInput : MonoBehaviour {
 
-    public float force = 10f;
-    public float forceOffset = 0.1f;
+    public float force = 3f;
+    public float forceOffset = .2f;
 
 	// Use this for initialization
 	void Start () {
@@ -33,7 +33,8 @@ public class MeshDeformerInput : MonoBehaviour {
             if (deformer)
             {
                 Vector3 point = hit.point;
-                deformer.AddDeformingRipple(point);
+                point += hit.point * forceOffset;
+                deformer.AddDeformingForce(point, force);
 
 
                 //Spring deforming;
