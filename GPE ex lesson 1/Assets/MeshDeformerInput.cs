@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MeshDeformerInput : MonoBehaviour {
 
-    public float force = 3f;
+    public float force = 30f;
     public float forceOffset = .2f;
 
 	// Use this for initialization
@@ -26,20 +26,16 @@ public class MeshDeformerInput : MonoBehaviour {
         Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
-
+        //Check for collision
         if (Physics.Raycast(inputRay, out hit))
         {
             MeshDeformer deformer = hit.collider.GetComponent<MeshDeformer>();
             if (deformer)
             {
+                //Apply force to mouse click position
                 Vector3 point = hit.point;
                 point += hit.point * forceOffset;
                 deformer.AddDeformingForce(point, force);
-
-
-                //Spring deforming;
-                //point += hit.normal * forceOffset;
-                //deformer.AddDeformingForce(point, force);
             }
         }
     }

@@ -8,7 +8,7 @@ public class CubeSphere : MonoBehaviour
     public int gridSize;
     private Vector3[] vertices;
     private Vector2[] cubeUV;
-    public Vector3[] normals;
+    private Vector3[] normals;
 
     private Mesh mesh;
     public float radius = 1f;
@@ -87,12 +87,14 @@ public class CubeSphere : MonoBehaviour
         int ring = (gridSize + gridSize) * 2;
         int tZ = 0, tX = 0, tY = 0, v = 0;
 
+        
         for (int y = 0; y < gridSize; y++, v++)
         {
             for (int q = 0; q < gridSize; q++, v++)
             {
                 tZ = SetQuad(trianglesZ, tZ, v, v + 1, v + ring, v + ring + 1);
             }
+            
             for (int q = 0; q < gridSize; q++, v++)
             {
                 tX = SetQuad(trianglesX, tX, v, v + 1, v + ring, v + ring + 1);
@@ -110,6 +112,7 @@ public class CubeSphere : MonoBehaviour
 
         tY = CreateTopFace(trianglesY, tY, ring);
         tY = CreateBottomFace(trianglesY, tY, ring);
+
         mesh.subMeshCount = 3;
         mesh.SetTriangles(trianglesZ, 0);
         mesh.SetTriangles(trianglesX, 1);
@@ -207,7 +210,33 @@ public class CubeSphere : MonoBehaviour
         Vector3 v = new Vector3(x, y, z) * 2f / gridSize - Vector3.one;
         normals[i] = v.normalized;
         vertices[i] = normals[i] * radius;
-        cubeUV[i] = new Vector2(v.x , v.y);
+        cubeUV[i] = new Vector2(vertices[i].x, vertices[i].y);
+        
+        //if (z == 0)
+        //{
+        //    cubeUV[i] = new Vector2(vertices[i].x, vertices[i].y);
+        //}
+        //if(z == gridSize)
+        //{
+        //    cubeUV[i] = new Vector2(vertices[i].y, vertices[i].x);
+        //}
+        //if(x == 0)
+        //{
+        //    cubeUV[i] = new Vector2(vertices[i].z, vertices[i].y);
+        //}
+        //if (x == gridSize)
+        //{
+        //    cubeUV[i] = new Vector2(vertices[i].z, vertices[i].y);
+        //}
+        //if(y == 0)
+        //{
+        //    cubeUV[i] = new Vector2(vertices[i].z, vertices[i].x);
+        //}
+        //if (y == gridSize)
+        //{
+        //    cubeUV[i] = new Vector2(vertices[i].z, vertices[i].x);
+        //}
+
     }
 
     //Draw vertices
@@ -224,4 +253,5 @@ public class CubeSphere : MonoBehaviour
             //Gizmos.DrawRay(vertices[i], normals[i]);
         }
     }
+    
 }

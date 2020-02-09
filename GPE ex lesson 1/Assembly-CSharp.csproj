@@ -67,6 +67,7 @@
     <Compile Include="Assets\MeshDeformerInput.cs" />
     <Compile Include="Assets\MeshRipple.cs" />
     <Compile Include="Assets\RoundedCube.cs" />
+    <Compile Include="Assets\RoundedCubeold.cs" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>D:/Unity/GPE_assignments/GPE ex lesson 1/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>
