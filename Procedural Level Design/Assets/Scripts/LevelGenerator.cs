@@ -25,14 +25,16 @@ public class LevelGenerator : MonoBehaviour
     //Array to store nodes to loop through
     public Node[] nodeArr = new Node[1];
 
-    int width = 128;
-    int height = 128;
+    public int width = 128;
+    public int height = 128;
 
     public int maxSplits = 15;
     public int minNodeSize = 20;
 
     bool hasSplit = true;
     int splitCounter = 0;
+
+    public int roomSpacing;
 
     protected void Start()
     {
@@ -157,11 +159,11 @@ public class LevelGenerator : MonoBehaviour
         {
             if (n.childA == null && n.childB == null)
             {
-                int widthSize = (int)UnityEngine.Random.Range(3, n.width - 3);
-                int heightSize = (int)UnityEngine.Random.Range(3, n.height - 3);
-                int posX = (int)UnityEngine.Random.Range(3, n.width - 3);
-                int poxY = (int)UnityEngine.Random.Range(3, n.width - 3);
-                FillBlock(grid, (int)n.x, (int)n.y, widthSize, heightSize, TileType.Wall);
+                int widthSize = (int)UnityEngine.Random.Range(n.width/6 + roomSpacing, n.width - roomSpacing);
+                int heightSize = (int)UnityEngine.Random.Range(n.height/6 + roomSpacing, n.height - roomSpacing);
+                int posX = (int)UnityEngine.Random.Range(1, n.width - widthSize -1);
+                int posY = (int)UnityEngine.Random.Range(1, n.height - heightSize -1);
+                FillBlock(grid, (int)n.x + posX, (int)n.y + posY, widthSize, heightSize, TileType.Empty);
             }
             else
             {
@@ -172,10 +174,10 @@ public class LevelGenerator : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        //Draw a line around the edges of the rectangle
+        //Draw a cube around the edges of each node
         foreach (Node n in nodeArr)
         {
-            n.DrawNode();
+            //n.DrawNode();
         }
         //Debug.Log(nodeList.Count);
     }
