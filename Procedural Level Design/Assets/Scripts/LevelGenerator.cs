@@ -23,7 +23,10 @@ public class LevelGenerator : MonoBehaviour
 
     Node node;
     //Array to store nodes to loop through
-    public Node[] nodeArr = new Node[1];
+    Node[] nodeArr = new Node[1];
+
+    //Array to store rooms
+    Rect[] roomArr = new Rect[1];
 
     public int width = 128;
     public int height = 128;
@@ -42,9 +45,9 @@ public class LevelGenerator : MonoBehaviour
 
         CreateNodes(width, height, maxSplits);
         //Fill room with walls
-        FillBlock(grid, (int)node.x, (int)node.y, (int)node.width, (int)node.height, TileType.Wall);
+        FillBlock(grid, node.x, node.y, node.width, node.height, TileType.Wall);
         CreateDungeonRooms();
-
+        CreateHallways();
         //FillBlock(grid, 0, 0, width, height, TileType.Wall);
         //FillBlock(grid, 26, 26, 12, 12, TileType.Empty);
         //FillBlock(grid, 32, 28, 1, 1, TileType.Player);
@@ -139,6 +142,9 @@ public class LevelGenerator : MonoBehaviour
                             {
                                 //Resize array to make space for 2 new children
                                 Array.Resize(ref nodeArr, nodeArr.Length + 2);
+                                //Resize room array
+                                Array.Resize(ref roomArr, roomArr.Length + 2);
+
                                 nodeArr[nodeArr.Length - 2] = n.childA;
                                 nodeArr[nodeArr.Length - 1] = n.childB;
 
@@ -155,20 +161,82 @@ public class LevelGenerator : MonoBehaviour
 
     void CreateDungeonRooms()
     {
+        roomArr[0] = new Rect(0, 0, 0, 0);
+        int roomCounter = 0;
+
         foreach (Node n in nodeArr)
         {
             if (n.childA == null && n.childB == null)
             {
-                int widthSize = (int)UnityEngine.Random.Range(n.width/6 + roomSpacing, n.width - roomSpacing);
-                int heightSize = (int)UnityEngine.Random.Range(n.height/6 + roomSpacing, n.height - roomSpacing);
-                int posX = (int)UnityEngine.Random.Range(1, n.width - widthSize -1);
-                int posY = (int)UnityEngine.Random.Range(1, n.height - heightSize -1);
-                FillBlock(grid, (int)n.x + posX, (int)n.y + posY, widthSize, heightSize, TileType.Empty);
+                int widthSize = UnityEngine.Random.Range(n.width / 6 + roomSpacing, n.width - roomSpacing);
+                int heightSize = UnityEngine.Random.Range(n.height / 6 + roomSpacing, n.height - roomSpacing);
+                int posX = UnityEngine.Random.Range(1, n.width - widthSize - 1);
+                int posY = UnityEngine.Random.Range(1, n.height - heightSize - 1);
+                FillBlock(grid, n.x + posX, n.y + posY, widthSize, heightSize, TileType.Empty);
+                roomCounter++;
+                roomArr[roomCounter] = new Rect(n.x + posX, n.y + posY, widthSize, heightSize);
             }
-            else
+        }
+    }
+
+    void CreateHallways()
+    {
+        for (int i = 0; i < (roomArr.Length -1); i++)//Create hallways for all rooms
+        {
+            Rect roomA = roomArr[i];
+            Rect roomB = roomArr[i + 1];
+            Vector2 randomPosA = new Vector2(UnityEngine.Random.Range(roomA.x + 2, roomA.width - 1), UnityEngine.Random.Range(roomA.y + 2, roomA.height - 1));
+            Vector2 randomPosB = new Vector2(UnityEngine.Random.Range(roomB.x + 2, roomB.width - 1), UnityEngine.Random.Range(roomB.y + 2, roomB.height - 1));
+            int xDistance = (int)randomPosB.x - (int)randomPosA.x;
+            int yDistance = (int)randomPosB.y - (int)randomPosA.y;
+
+            if (xDistance > 0)
             {
-                
+                if (yDistance > 0)
+                {
+                    FillBlock(grid, (int)randomPosB.x, (int)randomPosA.y, 1, Math.Abs(yDistance), TileType.Empty);
+                    FillBlock(grid, (int)randomPosA.x, (int)randomPosA.y, Math.Abs(xDistance), 1, TileType.Empty);
+                }
+                else if (yDistance < 0)
+                {
+                    FillBlock(grid, (int)randomPosA.x, (int)randomPosB.y, 1, Math.Abs(yDistance), TileType.Empty);
+                    FillBlock(grid, (int)randomPosA.x, (int)randomPosB.y, Math.Abs(xDistance), 1, TileType.Empty);
+                }
+                else if (yDistance == 0)
+                {
+                    FillBlock(grid, (int)randomPosB.x, (int)randomPosB.y, Math.Abs(xDistance), 1, TileType.Empty);
+                }
             }
+            if (xDistance < 0)
+            {
+                if (yDistance > 0)
+                {
+                    FillBlock(grid, (int)randomPosA.x, (int)randomPosA.y, 1, Math.Abs(yDistance), TileType.Empty);
+                    FillBlock(grid, (int)randomPosB.x, (int)randomPosB.y, Math.Abs(xDistance), 1, TileType.Empty);
+                }
+                else if (yDistance < 0)
+                {
+                    FillBlock(grid, (int)randomPosB.x, (int)randomPosA.y, Math.Abs(xDistance), 1, TileType.Empty);
+                    FillBlock(grid, (int)randomPosB.x, (int)randomPosB.y, 1, Math.Abs(yDistance), TileType.Empty);
+                }
+                else if(yDistance == 0)
+                {
+                    FillBlock(grid, (int)randomPosA.x, (int)randomPosA.y, Math.Abs(xDistance), 1, TileType.Empty);
+                }
+            }
+            if (xDistance == 0)
+            {
+                if (yDistance > 0)
+                {
+                    FillBlock(grid, (int)randomPosB.x, (int)randomPosB.y, 2, Mathf.Abs(yDistance), TileType.Empty);
+                }
+                else if(yDistance < 0)
+                {
+                    FillBlock(grid, (int)randomPosA.x, (int)randomPosA.y, 1, Mathf.Abs(yDistance), TileType.Empty);
+                }
+            }
+
+
         }
     }
 
@@ -177,7 +245,7 @@ public class LevelGenerator : MonoBehaviour
         //Draw a cube around the edges of each node
         foreach (Node n in nodeArr)
         {
-            //n.DrawNode();
+            n.DrawNode();
         }
         //Debug.Log(nodeList.Count);
     }

@@ -5,11 +5,11 @@ using UnityEngine;
 public class Node
 {
     public Node childA, childB;
-    public float x, y, width, height;
-    private float minSize = 9f;
-    private float maxSize;
+    public int x, y, width, height;
+    private int minSize = 9;
+    private int maxSize;
 
-    public Node(float nX, float nY, float nWidth, float nHeight)
+    public Node(int nX, int nY, int nWidth, int nHeight)
     {
         this.width = nWidth;
         this.height = nHeight;
@@ -46,7 +46,7 @@ public class Node
 
         
         //Random split location
-        float nodeSeperation = Random.Range(minSize, maxSize);
+        int nodeSeperation = Random.Range(minSize, maxSize);
 
         if (splitWidth)
         {

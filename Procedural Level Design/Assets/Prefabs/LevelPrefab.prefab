@@ -53,6 +53,6 @@ MonoBehaviour:
   - {fileID: 6941846331372314504, guid: 70089db148b3e4ca185a05a100139d2a, type: 3}
   width: 128
   height: 128
-  maxSplits: 75
-  minNodeSize: 8
-  roomSpacing: 2
+  maxSplits: 73
+  minNodeSize: 5
+  roomSpacing: 3
