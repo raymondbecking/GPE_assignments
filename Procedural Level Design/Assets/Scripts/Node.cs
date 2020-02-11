@@ -9,6 +9,9 @@ public class Node
     private int minSize = 9;
     private int maxSize;
 
+    public Rect room;
+    public int roomSpacing;
+
     public Node(int nX, int nY, int nWidth, int nHeight)
     {
         this.width = nWidth;
@@ -44,7 +47,7 @@ public class Node
         if (width > height && percentage(width, height) > 25) splitWidth = true;
         else if (height > width && percentage(height, width) > 25) splitWidth = false;
 
-        
+
         //Random split location
         int nodeSeperation = Random.Range(minSize, maxSize);
 
@@ -63,6 +66,56 @@ public class Node
             childB = new Node(x, (y + nodeSeperation), width, (height - nodeSeperation));
         }
         return true;
+
+    }
+
+    public void CreateRoom()
+    {
+        if (childA == null && childB == null)
+        {
+            int widthSize = Random.Range(width / 6 + roomSpacing, width - roomSpacing);
+            int heightSize = Random.Range(height / 6 + roomSpacing, height - roomSpacing);
+            int posX = Random.Range(1, width - widthSize - 1);
+            int posY = Random.Range(1, height - heightSize - 1);
+            room = new Rect(x + posX, y + posY, widthSize, heightSize);
+        }
+        else
+        {
+            if (childA != null)
+            {
+                childA.CreateRoom();
+            }
+            if (childB != null)
+            {
+                childB.CreateRoom();
+            }
+
+        }
+    }
+
+    public Rect GetRoom()
+    {
+        if (room != null)
+        {
+            return room;
+        }
+        else
+        {
+            Rect roomA = new Rect(0, 0, 0, 0);
+            Rect roomB = new Rect(0, 0, 0, 0);
+            if (childA != null)
+            {
+                roomA = childA.GetRoom();
+            }
+            if (childB != null)
+            {
+                roomB = childB.GetRoom();
+            }
+            if (roomA == null && roomB == null)
+            {
+                return new Rect(0,0,0,0);
+            }
+        }
 
     }
 

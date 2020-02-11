@@ -37,17 +37,13 @@ public class LevelGenerator : MonoBehaviour
     bool hasSplit = true;
     int splitCounter = 0;
 
-    public int roomSpacing;
 
     protected void Start()
     {
         grid = new TileType[height, width];
-
+        FillBlock(grid, 0, 0, width, height, TileType.Wall);
         CreateNodes(width, height, maxSplits);
         //Fill room with walls
-        FillBlock(grid, node.x, node.y, node.width, node.height, TileType.Wall);
-        CreateDungeonRooms();
-        CreateHallways();
         //FillBlock(grid, 0, 0, width, height, TileType.Wall);
         //FillBlock(grid, 26, 26, 12, 12, TileType.Empty);
         //FillBlock(grid, 32, 28, 1, 1, TileType.Player);
@@ -156,28 +152,10 @@ public class LevelGenerator : MonoBehaviour
                 }
             }
         }
+        node.CreateRoom();
         Debug.Log(nodeArr.Length);
     }
-
-    void CreateDungeonRooms()
-    {
-        roomArr[0] = new Rect(0, 0, 0, 0);
-        int roomCounter = 0;
-
-        foreach (Node n in nodeArr)
-        {
-            if (n.childA == null && n.childB == null)
-            {
-                int widthSize = UnityEngine.Random.Range(n.width / 6 + roomSpacing, n.width - roomSpacing);
-                int heightSize = UnityEngine.Random.Range(n.height / 6 + roomSpacing, n.height - roomSpacing);
-                int posX = UnityEngine.Random.Range(1, n.width - widthSize - 1);
-                int posY = UnityEngine.Random.Range(1, n.height - heightSize - 1);
-                FillBlock(grid, n.x + posX, n.y + posY, widthSize, heightSize, TileType.Empty);
-                roomCounter++;
-                roomArr[roomCounter] = new Rect(n.x + posX, n.y + posY, widthSize, heightSize);
-            }
-        }
-    }
+    
 
     void CreateHallways()
     {
