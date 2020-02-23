@@ -1,4 +1,4 @@
-﻿Shader "Unlit/NewUnlitShader"
+﻿Shader "ParallaxMap"
 {
     Properties
     {
@@ -7,15 +7,13 @@
         _MainTex ("Texture", 2D) = "white" {}
 		_HeightTex ("Heightmap (R)", 2D) = "gray" {}
 		_Normal ("Normal", 2D) = "bump" {}
-		_Parallax("Height Amount", float) = 0
+		_Parallax("Height Amount", Range(0, 1)) = 0
     }
     SubShader
     {
         Tags { "RenderType"="Opaque" }
         LOD 200
 
-        //Pass
-        //{
             CGPROGRAM
 			#pragma surface surf Standard fullforwardshadows
 			#pragma target 3.0
@@ -27,17 +25,7 @@
 			float _Amount;
 			fixed4 _Color;
 			
-            //struct appdata
-            //{
-            //    float4 vertex : POSITION;
-            //    float2 uv : TEXCOORD0;
-            //};
-
-            //struct v2f
-            //{
-            //    float2 uv : TEXCOORD0;
-            //    float4 vertex : SV_POSITION;
-            //};
+         
 
 			struct Input{
 			    float2 uv_MainTex;
@@ -51,6 +39,8 @@
 			sampler2D _HeightTex;
 			sampler2D _Normal;
 			float _Parallax;
+			float _ParallaxStrength;
+
 
 
 			void surf (Input IN, inout SurfaceOutputStandard o)
@@ -63,13 +53,6 @@
             o.Albedo = c.rgb;
 			}
 			
-            //v2f vert (appdata v)
-            //{
-            //    v2f o;
-            //    o.vertex = UnityObjectToClipPos(v.vertex);
-            //    o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-            //    return o;
-            //}
             ENDCG
         
     }
