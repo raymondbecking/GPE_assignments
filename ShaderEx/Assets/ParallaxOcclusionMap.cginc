@@ -1,8 +1,10 @@
 #pragma once
 
-// Shamelessly derived from: 
-// https://www.gamedev.net/resources/_/technical/graphics-programming-and-theory/a-closer-look-at-parallax-occlusion-mapping-r3262
-// License: https://www.gamedev.net/resources/_/gdnethelp/gamedevnet-open-license-r2956
+/* 
+This cginc file calculates what point of the heightmap should be seen by the camera
+The texture is offset based on the camera position to show the correct vertex
+
+*/
 
 void parallax_vert(
 	float4 vertex,
@@ -13,28 +15,29 @@ void parallax_vert(
 ) {
 	float4x4 mW = unity_ObjectToWorld;
 	float3 binormal = cross( normal, tangent.xyz ) * tangent.w;
-	float3 EyePosition = _WorldSpaceCameraPos;
 	
-	// Need to do it this way for W-normalisation and.. stuff.
+	// Calculate vector from eye to vertex, not taking light into consideration
 	float4 localCameraPos = mul(unity_WorldToObject, float4(_WorldSpaceCameraPos, 1));
 	float3 eyeLocal = vertex - localCameraPos;
 	float4 eyeGlobal = mul( float4(eyeLocal, 1), mW  );
 	float3 E = eyeGlobal.xyz;
 	
+	//Transform vectors to tangent space
 	float3x3 tangentToWorldSpace;
-
 	tangentToWorldSpace[0] = mul( normalize( tangent ), mW );
 	tangentToWorldSpace[1] = mul( normalize( binormal ), mW );
 	tangentToWorldSpace[2] = mul( normalize( normal ), mW );
 	
+	//World to tangent spoace matrix
 	float3x3 worldToTangentSpace = transpose(tangentToWorldSpace);
 	
+	//Transform eye vector to tangent space
 	eye	= mul( E, worldToTangentSpace );
 	sampleRatio = 1-dot( normalize(E), -normal );
 }
 
 float2 parallax_offset (
-	float fHeightMapScale,
+	float heightMapScale,
 	float3 eye,
 	float sampleRatio,
 	float2 texcoord,
@@ -42,27 +45,33 @@ float2 parallax_offset (
 	int nMinSamples,
 	int nMaxSamples
 ) {
-
-	float fParallaxLimit = -length( eye.xy ) / eye.z;
-	fParallaxLimit *= fHeightMapScale;
 	
-	float2 vOffsetDir = normalize( eye.xy );
-	float2 vMaxOffset = vOffsetDir * fParallaxLimit;
+	//Parallaxlimit Defines the max allowed length of the parallax offset
+	float parallaxLimit = -length( eye.xy ) / eye.z;//Orientation of eye vector to surface
+	parallaxLimit *= heightMapScale;//Determined depth of surface
+	
+	//Calculate direction of the offset
+	float2 offsetDir = normalize( eye.xy );
+	//Direction scaled by max parallax offset
+	float2 maxOffset = offsetDir * parallaxLimit;
 	
 	int nNumSamples = (int)lerp( nMinSamples, nMaxSamples, saturate(sampleRatio) );
-	
 	float fStepSize = 1.0 / (float)nNumSamples;
 	
+	//Implement SampleGrad instructions for texture sampling
 	float2 dx = ddx( texcoord );
 	float2 dy = ddy( texcoord );
 	
+
 	float fCurrRayHeight = 1.0;
 	float2 vCurrOffset = float2( 0, 0 );
 	float2 vLastOffset = float2( 0, 0 );
 
+	//
 	float fLastSampledHeight = 1;
 	float fCurrSampledHeight = 1;
 
+	//Start at sample 0
 	int nCurrSample = 0;
 	
 	while ( nCurrSample < nNumSamples )
@@ -86,7 +95,7 @@ float2 parallax_offset (
 		fCurrRayHeight -= fStepSize;
 
 		vLastOffset = vCurrOffset;
-		vCurrOffset += fStepSize * vMaxOffset;
+		vCurrOffset += fStepSize * maxOffset;
 
 		fLastSampledHeight = fCurrSampledHeight;
 	  }

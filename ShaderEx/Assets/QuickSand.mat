@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: QuickSand
-  m_Shader: {fileID: 4800000, guid: 3219f82a484abc54a9533dec37bd7dd4, type: 3}
+  m_Shader: {fileID: 4800000, guid: 1016d6dc0f4358b4c8b48eb0f12ad524, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -92,7 +92,7 @@ Material:
     - _Metallic: 0.19
     - _Mode: 0
     - _OcclusionStrength: 1
-    - _Parallax: 0.044
+    - _Parallax: 0.023
     - _ParallaxMaxSamples: 50.2
     - _ParallaxMinSamples: 2
     - _ParallaxSamples: 29.9
