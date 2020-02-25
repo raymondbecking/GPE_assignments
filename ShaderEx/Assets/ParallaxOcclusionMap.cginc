@@ -3,7 +3,6 @@
 /* 
 This cginc file calculates what point of the heightmap should be seen by the camera
 The texture is offset based on the camera position to show the correct vertex
-
 */
 
 void parallax_vert(
@@ -42,8 +41,8 @@ float2 parallax_offset (
 	float sampleRatio,
 	float2 texcoord,
 	sampler2D heightMap,
-	int nMinSamples,
-	int nMaxSamples
+	int minSamples,
+	int maxSamples
 ) {
 	
 	//Parallaxlimit Defines the max allowed length of the parallax offset
@@ -55,51 +54,58 @@ float2 parallax_offset (
 	//Direction scaled by max parallax offset
 	float2 maxOffset = offsetDir * parallaxLimit;
 	
-	int nNumSamples = (int)lerp( nMinSamples, nMaxSamples, saturate(sampleRatio) );
-	float fStepSize = 1.0 / (float)nNumSamples;
+
+	int sampleAmount = (int)lerp( minSamples, maxSamples, saturate(sampleRatio) );
+	float stepSize = 1.0 / (float)sampleAmount;
 	
 	//Implement SampleGrad instructions for texture sampling
 	float2 dx = ddx( texcoord );
 	float2 dy = ddy( texcoord );
 	
+	//Set default rayheight & offset
+	float currRayHeight = 1.0;
+	float2 currentOffset = float2( 0, 0 );
+	float2 lastOffset = float2( 0, 0 );
 
-	float fCurrRayHeight = 1.0;
-	float2 vCurrOffset = float2( 0, 0 );
-	float2 vLastOffset = float2( 0, 0 );
-
-	//
-	float fLastSampledHeight = 1;
-	float fCurrSampledHeight = 1;
+	//Set default sample height
+	float lastSampledHeight = 1;
+	float currSampledHeight = 1;
 
 	//Start at sample 0
-	int nCurrSample = 0;
+	int currSample = 0;
 	
-	while ( nCurrSample < nNumSamples )
+	//Find the intersection of the eye vector with the heightmap
+	while ( currSample < sampleAmount )
 	{
-	  fCurrSampledHeight = tex2Dgrad(heightMap, texcoord + vCurrOffset, dx, dy ).r;
-	  if ( fCurrSampledHeight > fCurrRayHeight )
+	  currSampledHeight = tex2Dgrad(heightMap, texcoord + currentOffset, dx, dy ).r;
+	  //Compare eye vector with heightmap
+	  if ( currSampledHeight > currRayHeight )//Intersection found, set offset & break loop
 	  {
-		float delta1 = fCurrSampledHeight - fCurrRayHeight;
-		float delta2 = ( fCurrRayHeight + fStepSize ) - fLastSampledHeight;
+		float delta1 = currSampledHeight - currRayHeight;
+		float delta2 = ( currRayHeight + stepSize ) - lastSampledHeight;
 
 		float ratio = delta1/(delta1+delta2);
 
-		vCurrOffset = (ratio) * vLastOffset + (1.0-ratio) * vCurrOffset;
+		//Intersection between current & last sample
+		currentOffset = (ratio) * lastOffset + (1.0-ratio) * currentOffset;
 
-		nCurrSample = nNumSamples + 1;
+		//Break out the loop
+		currSample = sampleAmount + 1;
 	  }
-	  else
+	  else//No Intersection found, keep looping
 	  {
-		nCurrSample++;
+		currSample++;
 
-		fCurrRayHeight -= fStepSize;
+		currRayHeight -= stepSize;
 
-		vLastOffset = vCurrOffset;
-		vCurrOffset += fStepSize * maxOffset;
+		//Set current & last offset for the next loop
+		lastOffset = currentOffset;
+		currentOffset += stepSize * maxOffset;
 
-		fLastSampledHeight = fCurrSampledHeight;
+		//Set last sampled height for next loop
+		lastSampledHeight = currSampledHeight;
 	  }
 	}
-	
-	return vCurrOffset;
+	//Return offset when intersection is found
+	return currentOffset;
 }

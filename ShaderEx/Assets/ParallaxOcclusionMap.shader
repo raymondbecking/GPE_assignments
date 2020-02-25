@@ -1,15 +1,15 @@
 ﻿Shader "Custom/ParallaxOcclusionMap" {
 	Properties {
 		_Color ("Color", Color) = (1,1,1,1)
-		_MainTex ("Albedo (RGB)", 2D) = "white" {}
-		_BumpMap ("Normal map (RGB)", 2D) = "bump" {}
-		_BumpScale ("Bump scale", Range(0,1)) = 1
-		_ParallaxMap ("Height map (R)", 2D) = "white" {}
+		_MainTex ("Albedo", 2D) = "white" {}
+		_BumpMap ("Normal map", 2D) = "bump" {}
+		_BumpAmount ("Bump scale", Range(0,1)) = 1
+		_ParallaxMap ("Height map", 2D) = "white" {}
 		_Parallax ("Height scale", Range(0,1)) = 0.05
-		_Glossiness ("Smoothness", Range(0,1)) = 0.5
+		_Glossiness ("Glossiness", Range(0,1)) = 0.5
 		_Metallic ("Metallic", Range(0,1)) = 0.0
-		_ParallaxMinSamples ("Parallax min samples", Range(2,100)) = 4
-		_ParallaxMaxSamples ("Parallax max samples", Range(2,100)) = 20
+		_ParallaxMinSamples ("Min samples", Range(2,100)) = 4
+		_ParallaxMaxSamples ("Max samples", Range(2,100)) = 20
 	}
 	SubShader {
 		Tags { "RenderType"="Opaque" }
@@ -31,7 +31,7 @@
 
 		half _Glossiness;
 		half _Metallic;
-		half _BumpScale;
+		half _BumpAmount;
 		half _Parallax;
 		fixed4 _Color;
 		uint _ParallaxMinSamples;
@@ -45,7 +45,7 @@
 		}
 
 		void surf (Input IN, inout SurfaceOutputStandard o) {
-			//Set parallax offset
+			//Set texture offset coordinates
 			float2 offset = parallax_offset (_Parallax, IN.eye, IN.sampleRatio, IN.texcoord, 
 			_ParallaxMap, _ParallaxMinSamples, _ParallaxMaxSamples );
 			//Change uv based on parallax offset
@@ -53,10 +53,9 @@
 
 			fixed4 c = tex2D (_MainTex, uv) * _Color;
 			o.Albedo = c.rgb;
-			o.Normal = UnpackScaleNormal(tex2D(_BumpMap, uv), _BumpScale);
+			o.Normal = UnpackScaleNormal(tex2D(_BumpMap, uv), _BumpAmount);
 			o.Metallic = _Metallic;
 			o.Smoothness = _Glossiness;
-			o.Alpha = c.a;
 		}
 		
 		ENDCG
