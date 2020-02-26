@@ -48,8 +48,12 @@
 			// Displacement
 			float heightTex = tex2D(_HeightTex, IN.uv_HeightTex).r;
             float2 parallaxOffset = ParallaxOffset(heightTex, _Parallax, IN.viewDir);
+
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex + parallaxOffset) * _Color;
+
+			//Normal mapping
 			o.Normal = UnpackNormal(tex2D(_Normal, IN.uv_Normal + parallaxOffset));
+
             o.Albedo = c.rgb;
 			}
 			

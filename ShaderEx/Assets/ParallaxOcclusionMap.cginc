@@ -15,7 +15,7 @@ void parallax_vert(
 	float4x4 mW = unity_ObjectToWorld;
 	float3 binormal = cross( normal, tangent.xyz ) * tangent.w;
 	
-	// Calculate vector from eye to vertex, not taking light into consideration
+	// Calculate vector from eye to vertex (without taking light into consideration)
 	float4 localCameraPos = mul(unity_WorldToObject, float4(_WorldSpaceCameraPos, 1));
 	float3 eyeLocal = vertex - localCameraPos;
 	float4 eyeGlobal = mul( float4(eyeLocal, 1), mW  );

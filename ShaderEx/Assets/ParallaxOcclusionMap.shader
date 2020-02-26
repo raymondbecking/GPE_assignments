@@ -6,10 +6,10 @@
 		_BumpAmount ("Bump scale", Range(0,1)) = 1
 		_ParallaxMap ("Height map", 2D) = "white" {}
 		_Parallax ("Height scale", Range(0,1)) = 0.05
-		_Glossiness ("Glossiness", Range(0,1)) = 0.5
+		_Glossiness ("Glossiness/Wetness", Range(0,1)) = 0.5
 		_Metallic ("Metallic", Range(0,1)) = 0.0
 		_ParallaxMinSamples ("Min samples", Range(2,100)) = 4
-		_ParallaxMaxSamples ("Max samples", Range(2,100)) = 20
+		_ParallaxMaxSamples ("Max samples", Range(2,10000)) = 20
 	}
 	SubShader {
 		Tags { "RenderType"="Opaque" }
@@ -40,6 +40,7 @@
 		#include<ParallaxOcclusionMap.cginc>
 		
 		void vert(inout appdata_full IN, out Input OUT) {
+			//Setup transformations
 			parallax_vert( IN.vertex, IN.normal, IN.tangent, OUT.eye, OUT.sampleRatio );
 			OUT.texcoord = IN.texcoord;
 		}
