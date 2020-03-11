@@ -24,7 +24,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 3df1ad2aa8ae9874785137c7b024113b, type: 3}
+        m_Texture: {fileID: 2800000, guid: 25a679f242325ff4d889cb52f4137500, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -44,7 +44,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: a992f957e584129438cf87bea3dd5f63, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _HeightMap:
@@ -52,11 +52,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _HeightTex:
-        m_Texture: {fileID: 2800000, guid: 2960d575e2742e1419c1f1b84d8fa53d, type: 3}
+        m_Texture: {fileID: 2800000, guid: 3a251013ec1ec9b43a0dd96182cd4927, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 52c890f9921e9a744ad7b2f9e6595ae4, type: 3}
+        m_Texture: {fileID: 2800000, guid: 861c78324ffd1cb4d93d347832c64539, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -64,7 +64,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Normal:
-        m_Texture: {fileID: 2800000, guid: 3df1ad2aa8ae9874785137c7b024113b, type: 3}
+        m_Texture: {fileID: 2800000, guid: 25a679f242325ff4d889cb52f4137500, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMap:
@@ -76,7 +76,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
-        m_Texture: {fileID: 2800000, guid: 2960d575e2742e1419c1f1b84d8fa53d, type: 3}
+        m_Texture: {fileID: 2800000, guid: 3a251013ec1ec9b43a0dd96182cd4927, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
@@ -86,9 +86,10 @@ Material:
     - _DetailNormalMapScale: 1
     - _Displacement: 0
     - _DstBlend: 0
+    - _Emission: 0
     - _FadeLength: 5
     - _GlossMapScale: 1
-    - _Glossiness: 0.321
+    - _Glossiness: 0.352
     - _GlossyReflections: 1
     - _HeightAmount: 29.82
     - _HighlightThresholdMax: 8.6
@@ -96,8 +97,8 @@ Material:
     - _Metallic: 0.346
     - _Mode: 0
     - _OcclusionStrength: 1
-    - _Parallax: 0.018
-    - _ParallaxMaxSamples: 37.7
+    - _Parallax: 0.224
+    - _ParallaxMaxSamples: 562
     - _ParallaxMinSamples: 2
     - _ParallaxSamples: 29.9
     - _ParallaxStrength: 0
@@ -109,9 +110,10 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Emission: {r: 1, g: 0.5235849, b: 0.5235849, a: 0.1764706}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _GlowColor: {r: 1, g: 1, b: 1, a: 1}
     - _HighlightColor: {r: 1, g: 0, b: 0, a: 0.5}
-    - _RegularColor: {r: 1, g: 1, b: 1, a: 0.5}
+    - _RegularColor: {r: 0.3584906, g: 0.33189896, b: 0.2282841, a: 0.5}
     - _Scale: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
