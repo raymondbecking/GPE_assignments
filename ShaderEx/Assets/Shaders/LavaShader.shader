@@ -25,9 +25,7 @@
 		_FlowStrength ("Flow Strength", Float) = 1
 	}
 	SubShader {
-		Tags { "RenderType"="Opaque" }
-		LOD 200
-		
+		Tags { "RenderType" = "Opaque" }
 		CGPROGRAM
 		#pragma surface surf Standard fullforwardshadows vertex:vert
 		#pragma shader_feature _EMISSION_MAP
@@ -61,11 +59,8 @@
 			OUT.texcoord = IN.texcoord;
 		}
 
-		void surf (Input IN, inout SurfaceOutputStandard o) {
-			//Time based speed
-			float time = _Time.y * _Speed;
-			float2x2 parallaxRotation;
-			float2 uvTiled = floor(IN.texcoord * _GridResolution) / _GridResolution;
+		float2 FlowCell (float2 uv, float2 cellOffset, float time, float3 eye, out float2x2 parallaxRotation){
+			float2 uvTiled = floor(uv * _GridResolution + cellOffset) / _GridResolution;
 			
 			//Tile based flow
 			float3 flow = tex2D(_FlowMap, uvTiled).rgb;
@@ -73,16 +68,30 @@
 			flow.z *= _FlowStrength;
 
 			//UV Directional flow based on time & rotation
-			float2 UVFlow = DirectionalFlowUV(IN.texcoord, float2(sin(time), cos(time)), _Tiling, time, parallaxRotation);
+			float2 UVFlow = DirectionalFlowUV(uv, flow, _Tiling, time, parallaxRotation);
+			
+			return UVFlow;
+		}
+
+		void surf (Input IN, inout SurfaceOutputStandard o) {//Research on surface shader
+			float2x2 parallaxRotation;
+			//Time based speed
+			float time = _Time.y * _Speed;
+			//Change uv based on parallax offset
+			float2 UVFlowA = FlowCell(IN.texcoord, float2(0, 0), time, IN.eye, parallaxRotation);
+			float2 UVFlowB = FlowCell(IN.texcoord, float2(1, 0), time, IN.eye, parallaxRotation);
+
+			float t = frac(IN.texcoord.x * _GridResolution);
+			float wA = 1 - t;
+			float wB = t;
+
+			float2 UVFlow = UVFlowA * wA + UVFlowB * wB;
 			
 			//Rotate eye xy coordinates to rotate perspective based on rotation position
 			IN.eye.xy = mul(parallaxRotation, IN.eye.xy);
-			
 			//Set texture offset coordinates
 			float2 offset = parallax_offset (_Parallax, IN.eye, IN.sampleRatio, UVFlow, 
 			_ParallaxMap, _ParallaxMinSamples, _ParallaxMaxSamples);
-			
-			//Change uv based on parallax offset
 			float2 uv = UVFlow + offset;
 
 			
@@ -95,6 +104,9 @@
 		}
 		
 		ENDCG
+		
 	}
 	FallBack "Diffuse"
+
+	
 }
