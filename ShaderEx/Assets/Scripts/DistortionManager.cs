@@ -35,7 +35,7 @@ public class DistortionManager
         _distortionEffects.Remove(distortionEffect);
     }
 
-    //Commands to draw the distortion effect list to the commandbuffer(?)
+    //Pass the added distortion effects to the commandbuffer to add it to the rendering pipeline
     public void PopulateCommandBuffer(CommandBuffer commandBuffer)
     {
         for(int i = 0, len = _distortionEffects.Count; i < len; i++)

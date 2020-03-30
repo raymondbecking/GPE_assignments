@@ -61,8 +61,10 @@
 					float sceneEyeDepth = DECODE_EYEDEPTH(tex2D(_CameraDepthTexture, i.projPos.xy / i.projPos.w));
 					//Check if the scene depth is bigger than fragment depth(distance to vertices), built in depth information to allow smaller distortion textures
 					float zCull = sceneEyeDepth > i.projPos.z;
-					//Normal values
+
+					//Unpack Normal values for a more 3d-ish texture
                     float3 data = UnpackNormal(tex2D(_MainTex, i.uv)).xyz;
+					//Handles the strength of the distortion based on the alpha
 					float scale = data.b * i.alpha * _Magnitude;
 					//returns colors if nothing is blocking its view
 					return data.rg * scale * zCull;

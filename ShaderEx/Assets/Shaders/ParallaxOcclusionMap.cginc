@@ -2,7 +2,7 @@
 
 /* 
 This cginc file calculates what point of the heightmap should be seen by the camera
-The texture is offset based on the camera position to show the correct vertex
+The texture is offset based on the camera position to show the correct vertex point on the heightmap
 */
 
 void parallax_vert(
@@ -27,7 +27,7 @@ void parallax_vert(
 	tangentToWorldSpace[1] = mul( normalize( binormal ), mW );
 	tangentToWorldSpace[2] = mul( normalize( normal ), mW );
 	
-	//World to tangent spoace matrix
+	//World to tangent space matrix
 	float3x3 worldToTangentSpace = transpose(tangentToWorldSpace);
 	
 	//Transform eye vector to tangent space

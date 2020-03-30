@@ -87,7 +87,7 @@ Material:
     - _GlossyReflections: 1
     - _GridResolution: 10
     - _LightingEnabled: 0
-    - _Magnitude: 6
+    - _Magnitude: 4
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1

@@ -4,21 +4,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
 
+/*This is the setup of a custom post processing effect
+ */
+
 //Allow unity to properly serialze parameter settings
 [Serializable]
 [PostProcess(typeof(DistortionRenderer), PostProcessEvent.BeforeStack, "Custom/Distortion")]
 public class Distortion : PostProcessEffectSettings
 {
     //The amount of distortion
-    [Range(0f, 1.0f), Tooltip("The magnitude in texels of distortion fx.")]
+    [Range(0f, 1.0f), Tooltip("Amount of distortion")]
     public FloatParameter Magnitude = new FloatParameter { value = 1.0f };
 
     //Texture Downscaling for memory saving
-    [Range(0, 4), Tooltip("The down-scale factor to apply to the generated texture.")]
+    [Range(0, 4), Tooltip("Texture downscaling")]
     public IntParameter DownScaleFactor = new IntParameter { value = 0 };
 
     //Allow viewing the distortion effect in debug view
-    [Tooltip("Displays the Distortion Effects in debug view.")]
+    [Tooltip("Allow debugging view")]
     public BoolParameter DebugView = new BoolParameter { value = false };
 
 }
@@ -38,6 +41,7 @@ public class DistortionRenderer : PostProcessEffectRenderer<Distortion>
     public override void Init()
     {
         _globalDistortionTexID = Shader.PropertyToID("_GlobalDistortionTex");
+        //Shader that does the actual distortion calculations
         _distortionShader = Shader.Find("Hidden/Custom/Distortion");
         //Also do the default init stuff
         base.Init();
@@ -62,8 +66,9 @@ public class DistortionRenderer : PostProcessEffectRenderer<Distortion>
             //Clear the render target for reuse
             context.command.ClearRenderTarget(false, true, Color.clear);
         }
-
+        //Call distortionmanager to add distortions to render pipeline
         DistortionManager.Instance.PopulateCommandBuffer(context.command);
+        //Blit the distorted texture to the screen and voila!
         context.command.BlitFullscreenTriangle(context.source, context.destination, sheet, 0);
     }
 }

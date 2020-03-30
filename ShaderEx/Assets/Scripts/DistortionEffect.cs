@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//Component for regestering a renderer 
+//Component for registering a renderer 
 [ExecuteInEditMode]
 [RequireComponent(typeof(Renderer))]
 public class DistortionEffect : MonoBehaviour
