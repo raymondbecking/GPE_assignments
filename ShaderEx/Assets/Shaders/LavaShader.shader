@@ -18,19 +18,24 @@
 		_Emission ("Emission", Color) = (0, 0, 0)
 		_Glossiness ("Glossiness/Wetness", Range(0,1)) = 0.5
 		_Metallic ("Metallic", Range(0,1)) = 0.0
-		_FlowMap ("Flow (RG)", 2D) = "black" {}
+		[Header(Optional Flowmap (WIP))] 
+		[Toggle(TOGGLE_FLOWMAP)] _FlowMapToggle ("Enable flowmap?", Float) = 0
+ 		_FlowMap ("Flow (RG)", 2D) = "black" {}
 		_Tiling ("Tiling", Float) = 1
 		_GridResolution ("Grid Resolution", Float) = 10
-		_Speed ("Speed", Float) = 1
+		_Speed ("Flow Speed", Float) = 1
 		_FlowStrength ("Flow Strength", Float) = 1
+		[Header(Manual Directional flow)] 
+		[IntRange] _Direction ("Direction", Range(0,8)) = 0
 	}
 	SubShader {
 		Tags { "RenderType" = "Opaque" }
 		CGPROGRAM
 		#pragma surface surf Standard fullforwardshadows vertex:vert
 		#pragma shader_feature _EMISSION_MAP
-		#pragma target 3.0
-		
+		#pragma shader_feature TOGGLE_FLOWMAP
+		#pragma target 5.0
+		#include "UnityCG.cginc"
 		#include "Flow.cginc"
 
 		sampler2D _MainTex, _BumpMap, _ParallaxMap, _EmissionMap, _FlowMap;
@@ -49,7 +54,10 @@
 		fixed4 _Color;
 		uint _ParallaxMinSamples;
 		uint _ParallaxMaxSamples;
-		float _Tiling, _GridResolution, _Speed, _FlowStrength;
+		float _FlowMapToggle;
+		float _GridResolution, _Speed, _FlowStrength, _Tiling;
+		//float4 _MainTex_ST, _FlowMap_ST;
+		int _Direction;
 		
 		#include<ParallaxOcclusionMap.cginc>
 		
@@ -80,8 +88,11 @@
 			float2x2 parallaxRotation;
 			//Time based speed
 			float time = _Time.y * _Speed;
-			//Change uv based on parallax offset
+			//Set uv and allow texture tiling&offset, USE AT OWN RISK, OBJECT ROTATIONS BREAKS POM(if rotation != (0,0,0))
+			//float2 uv = IN.texcoord * _MainTex_ST.xy + _MainTex_ST.zw
 			float2 uv = IN.texcoord;
+
+			#if TOGGLE_FLOWMAP
 			float2 UVFlowA = FlowCell(uv, float2(0, 0), time, IN.eye, parallaxRotation);
 			float2 UVFlowB = FlowCell(uv, float2(0, 0), time, IN.eye, parallaxRotation);
 			float2 UVFlowC = FlowCell(uv, float2(0, 0), time, IN.eye, parallaxRotation);
@@ -95,11 +106,46 @@
 
 			float2 UVFlow = UVFlowA * wA + UVFlowB * wB + UVFlowC * wC + UVFlowD * wD;
 			
+			#else
+			float2 direction = float2(1,1);
+			switch(_Direction){
+				case 0:
+				//Make sure direction vector never goes to 0, this is to prevent dividing by 0 in the DirectionalFlowUV function
+				direction = float2(1,1);
+				//(0,0) direction == no movement, set the time to 0 instead to achieve the same effect
+				time = 0;
+				break;
+				case 1:
+				direction = float2(1,0);
+				break;
+				case 2:
+				direction = float2(1,-1);
+				break;
+				case 3:
+				direction = float2(0,-1);
+				break;
+				case 4:
+				direction = float2(-1,-1);
+				break;
+				case 5:
+				direction = float2(-1,0);
+				break;
+				case 6:
+				direction = float2(-1,1);
+				break;
+				case 7:
+				direction = float2(0,1);
+				break;
+			}			
+			float2 UVFlow = DirectionalFlowUV(uv, direction, float(1), time, parallaxRotation);
+			#endif
 			//Rotate eye xy coordinates to rotate perspective based on rotation position
 			IN.eye.xy = mul(parallaxRotation, IN.eye.xy);
 			//Set texture offset coordinates
 			float2 offset = parallax_offset (_Parallax, IN.eye, IN.sampleRatio, UVFlow, 
 			_ParallaxMap, _ParallaxMinSamples, _ParallaxMaxSamples);
+			
+			//Change uv based on flow and parallax offset
 			uv = UVFlow + offset;
 
 			
